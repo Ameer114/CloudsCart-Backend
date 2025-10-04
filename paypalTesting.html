@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PayPal Payment Testing</title>
+  </head>
+  <body>
+    <h1>Test PayPal Payment Gateway 🤩</h1>
+    <button id="btnPayment">Pay with PayPal</button>
+
+    <script>
+      const shippingAddress = "This is your shipping address!";
+      const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2ODk4M2ZiOWY1ZWU1NTcyNmJhMGI0NGMiLCJuYW1lIjoiYW1lZXIiLCJyb2xlIjoic2VsbGVyIiwiaWF0IjoxNzU1OTUzMjI1LCJleHAiOjE3NTU5NjA0MjV9.qFw5YM3w18gOhfLqm0NTKt3b7v6AvDECmSxPiWAYluk"; 
+      // above one is jwt token
+
+      const create_order_url =
+        "http://localhost:4000/api/order/paypal/create-order";
+      const capture_order_url =
+        "http://localhost:4000/api/order/paypal/capture-order";
+
+      document
+        .getElementById("btnPayment")
+        .addEventListener("click", async () => {
+          try {
+            // Step 1: Create Order
+            const response = await fetch(create_order_url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ shippingAddress }),
+            });
+            const data = await response.json();
+
+            if (data.approvalUrl) {
+              // Redirect to PayPal approval page
+              window.location.href = data.approvalUrl;
+            } else {
+              alert("Error creating order");
+            }
+          } catch (error) {
+            console.error("Error creating order:", error);
+          }
+        });
+
+      // Handle return from PayPal
+      (async () => {
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("token")) {
+          const orderId = urlParams.get("token");
+          try {
+            const captureResponse = await fetch(capture_order_url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ orderId, shippingAddress }),
+            });
+            const result = await captureResponse.json();
+            if (result.status === "COMPLETED") {
+              alert("Payment successful!");
+            } else {
+              alert("Payment failed.");
+            }
+          } catch (error) {
+            console.error("Error capturing order:", error);
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>
