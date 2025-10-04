@@ -137,8 +137,8 @@ const response=await axios.post(`${paypal.baseUrl}/v2/checkout/orders`,
         }
     ],
     application_context:{
-        return_url:"http://localhost:5173/order",//frontend url
-        cancel_url:"http://localhost:5173/cart"//frontend url of cancel
+        return_url:"https://cloudscart.netlify.app/order",//frontend url
+        cancel_url:"https://cloudscart.netlify.app/cart"//frontend url of cancel
     }
 },
 {
