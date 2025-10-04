@@ -12,14 +12,14 @@ router.get('/google',
 router.get( '/google/callback',
     passport.authenticate( 'google', {
         session:false,
-        failureRedirect:"http://localhost:5173/login"
+        failureRedirect:"https://cloudscart.netlify.app/login"
 }),
 
 async(req,res)=>{
     const profile=req.user;
 
     const token=await handleOAuthCallback(profile,"googleId")
-    res.redirect(`http://localhost:5173/?authToken=${token}`)
+    res.redirect(`https://cloudscart.netlify.app/?authToken=${token}`)
 }
 );
 
