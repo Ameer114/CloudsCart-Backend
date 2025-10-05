@@ -42,6 +42,10 @@ app.use("/api/products",productroutes)
 app.use("/api/cart",cartroutes)
 app.use("/api/order",orderRoutes)
 
+app.get("/",(req,res)=>{
+res.send("hello ");
+})
+
 app.use((error, req, res, next)=>{
 console.log('Running error middleware');
 console.log(error);
